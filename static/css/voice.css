@@ -1,0 +1,805 @@
+#boot.quick {
+    display: none;
+}
+
+/* ---------- pulsante nella barra ---------- */
+
+.voice-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #e6c9ff;
+    background: rgba(180, 92, 255, 0.14);
+    transition: background 0.2s, transform 0.2s;
+}
+
+.voice-btn:hover {
+    background: rgba(180, 92, 255, 0.28);
+    transform: translateY(-1px);
+}
+
+/* ---------- schermata vocale ---------- */
+
+.voice {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+
+    opacity: 0;
+
+    background:
+        radial-gradient(
+            circle at 50% 42%,
+            rgba(90, 30, 170, 0.35),
+            transparent 55%
+        ),
+        rgba(5, 1, 12, 0.94);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    animation: fadein 0.3s ease forwards;
+}
+
+/* ---------- chiusura ---------- */
+
+.voice-close {
+    position: absolute;
+    top: calc(16px + env(safe-area-inset-top));
+    right: 16px;
+
+    width: 42px;
+    height: 42px;
+
+    border: 0;
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    font-size: 15px;
+    color: var(--muted);
+
+    background: rgba(255, 255, 255, 0.07);
+
+    transition:
+        background 0.2s,
+        color 0.2s,
+        transform 0.2s;
+}
+
+.voice-close:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    transform: rotate(90deg);
+}
+
+/* ---------- contenitore ---------- */
+
+.voice-stage {
+    width: min(720px, 100%);
+
+    display: grid;
+    justify-items: center;
+
+    gap: 14px;
+
+    text-align: center;
+}
+
+/* ---------- ORB ---------- */
+
+.voice-orb {
+    position: relative;
+
+    width: 190px;
+    height: 190px;
+
+    margin-bottom: 26px;
+    padding: 0;
+
+    border: 0;
+    border-radius: 50%;
+
+    cursor: pointer;
+    outline: 0;
+
+    background: transparent;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* nucleo */
+
+.vcore {
+    position: absolute;
+    inset: 0;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 32% 28%,
+            #fff 0 3%,
+            #f0d9ff 8%,
+            #b95cff 26%,
+            #6a22e0 52%,
+            #2a0a66 80%
+        );
+
+    box-shadow:
+        0 0 80px rgba(170, 70, 255, 0.6),
+        inset -16px -20px 44px rgba(0, 0, 0, 0.5),
+        inset 10px 10px 30px rgba(255, 255, 255, 0.25);
+
+    transition:
+        filter 0.4s,
+        box-shadow 0.4s;
+}
+
+/* anelli */
+
+.vr {
+    position: absolute;
+
+    inset: -18px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(202, 142, 255, 0.35);
+
+    opacity: 0;
+}
+
+/* focus tastiera */
+
+.voice-orb:focus-visible .vcore {
+    box-shadow:
+        0 0 0 3px rgba(255, 255, 255, 0.5),
+        0 0 80px rgba(170, 70, 255, 0.6);
+}
+
+/* ---------- STATI ---------- */
+
+/* IDLE */
+
+.voice-orb[data-state="idle"] .vcore {
+    filter: saturate(0.55) brightness(0.8);
+
+    animation:
+        float 6s ease-in-out infinite;
+}
+
+/* ASCOLTO */
+
+.voice-orb[data-state="listening"] .vcore {
+    filter: hue-rotate(-50deg);
+
+    box-shadow:
+        0 0 90px rgba(79, 216, 255, 0.5),
+        inset -16px -20px 44px rgba(0, 0, 0, 0.5),
+        inset 10px 10px 30px rgba(255, 255, 255, 0.25);
+
+    animation:
+        vbreath 1.5s ease-in-out infinite;
+}
+
+.voice-orb[data-state="listening"] .vr {
+    border-color: rgba(79, 216, 255, 0.5);
+
+    animation:
+        vripple 2.2s ease-out infinite;
+}
+
+/* PENSANDO */
+
+.voice-orb[data-state="thinking"] .vcore {
+    animation:
+        vbreath 2.4s ease-in-out infinite;
+}
+
+.voice-orb[data-state="thinking"] .vr {
+    opacity: 0.8;
+
+    animation:
+        ringspin 3s linear infinite;
+}
+
+/* PARLANDO */
+
+.voice-orb[data-state="speaking"] .vcore {
+    animation:
+        vspeak 0.9s ease-in-out infinite;
+}
+
+.voice-orb[data-state="speaking"] .vr {
+    animation:
+        vripple 1.8s ease-out infinite;
+}
+
+/* anelli aggiuntivi */
+
+.vr.r2 {
+    animation-delay: 0.6s !important;
+    inset: -30px;
+}
+
+.vr.r3 {
+    animation-delay: 1.2s !important;
+    inset: -44px;
+}
+
+.voice-orb[data-state="thinking"] .vr.r2 {
+    animation-direction: reverse;
+    animation-duration: 4.5s;
+}
+
+.voice-orb[data-state="thinking"] .vr.r3 {
+    animation-duration: 6s;
+}
+
+/* ---------- ANIMAZIONI ---------- */
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes ringspin {
+    from {
+        transform: rotate(0deg) scale(0.95);
+    }
+
+    to {
+        transform: rotate(360deg) scale(1.05);
+    }
+}
+
+@keyframes vripple {
+    0% {
+        transform: scale(0.85);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: scale(1.45);
+        opacity: 0;
+    }
+}
+
+@keyframes vbreath {
+    50% {
+        transform: scale(1.06);
+    }
+}
+
+@keyframes vspeak {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.09);
+        filter: brightness(1.2);
+    }
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ---------- TESTI ---------- */
+
+.voice-state {
+    min-height: 18px;
+
+    font: 600 13px var(--disp);
+
+    letter-spacing: 0.22em;
+    padding-left: 0.22em;
+
+    text-transform: uppercase;
+
+    color: var(--muted);
+}
+
+.voice-you {
+    min-height: 24px;
+
+    max-width: 100%;
+
+    font-size: 15px;
+
+    color: var(--muted);
+
+    overflow-wrap: anywhere;
+}
+
+.voice-cap {
+    min-height: 64px;
+
+    max-width: 100%;
+
+    font-size: 19px;
+    font-weight: 500;
+
+    line-height: 1.5;
+
+    color: var(--text);
+
+    overflow-wrap: anywhere;
+}
+
+.voice-hint {
+    margin-top: 6px;
+
+    font-size: 11px;
+
+    color: #766580;
+}
+
+/* ---------- telefono ---------- */
+
+@media (max-width: 700px) {
+
+    .voice-btn {
+        width: 38px;
+        padding: 0;
+
+        justify-content: center;
+    }
+
+    .voice-btn span {
+        display: none;
+    }
+
+    .voice {
+        padding:
+            calc(20px + env(safe-area-inset-top))
+            20px
+            calc(20px + env(safe-area-inset-bottom));
+    }
+
+    .voice-orb {
+        width: 160px;
+        height: 160px;
+    }
+
+    .voice-cap {
+        font-size: 17px;
+    }
+
+    .voice-you {
+        font-size: 14px;
+    }
+}
+
+/* ---------- riduzione animazioni ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .voice *,
+    .voice *::before,
+    .voice *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}#boot.quick {
+    display: none;
+}
+
+/* ---------- pulsante nella barra ---------- */
+
+.voice-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #e6c9ff;
+    background: rgba(180, 92, 255, 0.14);
+    transition: background 0.2s, transform 0.2s;
+}
+
+.voice-btn:hover {
+    background: rgba(180, 92, 255, 0.28);
+    transform: translateY(-1px);
+}
+
+/* ---------- schermata vocale ---------- */
+
+.voice {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+
+    opacity: 0;
+
+    background:
+        radial-gradient(
+            circle at 50% 42%,
+            rgba(90, 30, 170, 0.35),
+            transparent 55%
+        ),
+        rgba(5, 1, 12, 0.94);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    animation: fadein 0.3s ease forwards;
+}
+
+/* ---------- chiusura ---------- */
+
+.voice-close {
+    position: absolute;
+    top: calc(16px + env(safe-area-inset-top));
+    right: 16px;
+
+    width: 42px;
+    height: 42px;
+
+    border: 0;
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    font-size: 15px;
+    color: var(--muted);
+
+    background: rgba(255, 255, 255, 0.07);
+
+    transition:
+        background 0.2s,
+        color 0.2s,
+        transform 0.2s;
+}
+
+.voice-close:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    transform: rotate(90deg);
+}
+
+/* ---------- contenitore ---------- */
+
+.voice-stage {
+    width: min(720px, 100%);
+
+    display: grid;
+    justify-items: center;
+
+    gap: 14px;
+
+    text-align: center;
+}
+
+/* ---------- ORB ---------- */
+
+.voice-orb {
+    position: relative;
+
+    width: 190px;
+    height: 190px;
+
+    margin-bottom: 26px;
+    padding: 0;
+
+    border: 0;
+    border-radius: 50%;
+
+    cursor: pointer;
+    outline: 0;
+
+    background: transparent;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* nucleo */
+
+.vcore {
+    position: absolute;
+    inset: 0;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 32% 28%,
+            #fff 0 3%,
+            #f0d9ff 8%,
+            #b95cff 26%,
+            #6a22e0 52%,
+            #2a0a66 80%
+        );
+
+    box-shadow:
+        0 0 80px rgba(170, 70, 255, 0.6),
+        inset -16px -20px 44px rgba(0, 0, 0, 0.5),
+        inset 10px 10px 30px rgba(255, 255, 255, 0.25);
+
+    transition:
+        filter 0.4s,
+        box-shadow 0.4s;
+}
+
+/* anelli */
+
+.vr {
+    position: absolute;
+
+    inset: -18px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(202, 142, 255, 0.35);
+
+    opacity: 0;
+}
+
+/* focus tastiera */
+
+.voice-orb:focus-visible .vcore {
+    box-shadow:
+        0 0 0 3px rgba(255, 255, 255, 0.5),
+        0 0 80px rgba(170, 70, 255, 0.6);
+}
+
+/* ---------- STATI ---------- */
+
+/* IDLE */
+
+.voice-orb[data-state="idle"] .vcore {
+    filter: saturate(0.55) brightness(0.8);
+
+    animation:
+        float 6s ease-in-out infinite;
+}
+
+/* ASCOLTO */
+
+.voice-orb[data-state="listening"] .vcore {
+    filter: hue-rotate(-50deg);
+
+    box-shadow:
+        0 0 90px rgba(79, 216, 255, 0.5),
+        inset -16px -20px 44px rgba(0, 0, 0, 0.5),
+        inset 10px 10px 30px rgba(255, 255, 255, 0.25);
+
+    animation:
+        vbreath 1.5s ease-in-out infinite;
+}
+
+.voice-orb[data-state="listening"] .vr {
+    border-color: rgba(79, 216, 255, 0.5);
+
+    animation:
+        vripple 2.2s ease-out infinite;
+}
+
+/* PENSANDO */
+
+.voice-orb[data-state="thinking"] .vcore {
+    animation:
+        vbreath 2.4s ease-in-out infinite;
+}
+
+.voice-orb[data-state="thinking"] .vr {
+    opacity: 0.8;
+
+    animation:
+        ringspin 3s linear infinite;
+}
+
+/* PARLANDO */
+
+.voice-orb[data-state="speaking"] .vcore {
+    animation:
+        vspeak 0.9s ease-in-out infinite;
+}
+
+.voice-orb[data-state="speaking"] .vr {
+    animation:
+        vripple 1.8s ease-out infinite;
+}
+
+/* anelli aggiuntivi */
+
+.vr.r2 {
+    animation-delay: 0.6s !important;
+    inset: -30px;
+}
+
+.vr.r3 {
+    animation-delay: 1.2s !important;
+    inset: -44px;
+}
+
+.voice-orb[data-state="thinking"] .vr.r2 {
+    animation-direction: reverse;
+    animation-duration: 4.5s;
+}
+
+.voice-orb[data-state="thinking"] .vr.r3 {
+    animation-duration: 6s;
+}
+
+/* ---------- ANIMAZIONI ---------- */
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes ringspin {
+    from {
+        transform: rotate(0deg) scale(0.95);
+    }
+
+    to {
+        transform: rotate(360deg) scale(1.05);
+    }
+}
+
+@keyframes vripple {
+    0% {
+        transform: scale(0.85);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: scale(1.45);
+        opacity: 0;
+    }
+}
+
+@keyframes vbreath {
+    50% {
+        transform: scale(1.06);
+    }
+}
+
+@keyframes vspeak {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.09);
+        filter: brightness(1.2);
+    }
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ---------- TESTI ---------- */
+
+.voice-state {
+    min-height: 18px;
+
+    font: 600 13px var(--disp);
+
+    letter-spacing: 0.22em;
+    padding-left: 0.22em;
+
+    text-transform: uppercase;
+
+    color: var(--muted);
+}
+
+.voice-you {
+    min-height: 24px;
+
+    max-width: 100%;
+
+    font-size: 15px;
+
+    color: var(--muted);
+
+    overflow-wrap: anywhere;
+}
+
+.voice-cap {
+    min-height: 64px;
+
+    max-width: 100%;
+
+    font-size: 19px;
+    font-weight: 500;
+
+    line-height: 1.5;
+
+    color: var(--text);
+
+    overflow-wrap: anywhere;
+}
+
+.voice-hint {
+    margin-top: 6px;
+
+    font-size: 11px;
+
+    color: #766580;
+}
+
+/* ---------- telefono ---------- */
+
+@media (max-width: 700px) {
+
+    .voice-btn {
+        width: 38px;
+        padding: 0;
+
+        justify-content: center;
+    }
+
+    .voice-btn span {
+        display: none;
+    }
+
+    .voice {
+        padding:
+            calc(20px + env(safe-area-inset-top))
+            20px
+            calc(20px + env(safe-area-inset-bottom));
+    }
+
+    .voice-orb {
+        width: 160px;
+        height: 160px;
+    }
+
+    .voice-cap {
+        font-size: 17px;
+    }
+
+    .voice-you {
+        font-size: 14px;
+    }
+}
+
+/* ---------- riduzione animazioni ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .voice *,
+    .voice *::before,
+    .voice *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

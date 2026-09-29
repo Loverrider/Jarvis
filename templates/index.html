@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#06010e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>JARVIS</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@500;700;900&display=swap">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div id="boot">
+    <div class="boot-core">
+        <div class="boot-logo"></div>
+        <div class="boot-title">JARVIS</div>
+        <div class="boot-bar"><i></i></div>
+        <ul class="boot-lines">
+            <li style="--d:.1s">Inizializzazione nucleo ........ OK</li>
+            <li style="--d:.4s">Apertura memoria persistente ... OK</li>
+            <li style="--d:.7s">Sincronizzazione modello ....... OK</li>
+            <li style="--d:1s">Sistema pronto</li>
+        </ul>
+    </div>
+</div>
+
+<canvas id="galaxy"></canvas>
+<div id="aurora"></div>
+<div id="grid"></div>
+<div id="vignette"></div>
+<div id="cursor"></div>
+
+<div class="app" id="app">
+    <main class="shell">
+
+        <aside class="side left" id="side-left">
+            <div class="side-pad">
+                <button class="btn wide" id="new-chat" type="button">+ Nuova conversazione</button>
+            </div>
+            <div class="side-title">Conversazioni</div>
+            <div class="scroll" id="conv-list"></div>
+            <div class="side-foot"><span class="model-tag">{{ model }}</span></div>
+        </aside>
+
+        <section class="center">
+
+            <header class="topbar">
+                <button class="icon-btn only-mobile" id="btn-left" type="button" aria-label="Conversazioni">☰</button>
+
+                <div class="brand">
+                    <div class="logo"></div>
+                    <div>
+                        <h1>JARVIS</h1>
+                        <span>Local intelligence system</span>
+                    </div>
+                </div>
+
+                <div class="top-right">
+                    <div class="status" id="status" data-state="warn">
+                        <span class="status-dot"></span>
+                        <span id="status-text">Controllo…</span>
+                    </div>
+                    <button class="pill-btn only-mobile" id="btn-right" type="button">Memoria</button>
+                </div>
+            </header>
+
+            <section class="chat" id="chat">
+                <div class="hero" id="hero">
+                    <div class="hero-inner" id="hero-inner">
+                        <div class="orb" id="orb">
+                            <div class="ring r1"></div>
+                            <div class="ring r2"></div>
+                            <div class="ring r3"></div>
+                            <div class="orb-core"></div>
+                            <div class="orb-swirl"></div>
+                            <div class="orb-shine"></div>
+                        </div>
+
+                        <h2 id="hero-title">JARVIS</h2>
+                        <p>Memoria persistente attiva. Dimmi cosa devo fare.</p>
+
+                        <div class="suggest">
+                            <button class="chip glow" type="button" data-text="Script Python">Script Python</button>
+                            <button class="chip glow" type="button" data-text="Spiegami un concetto">Spiegami un concetto</button>
+                            <button class="chip glow" type="button" data-text="Ricorda una preferenza">Ricorda una preferenza</button>
+                            <button class="chip glow" type="button" data-text="Cosa ricordi di me?">Cosa ricordi di me?</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="composer">
+                <div class="input-wrap">
+                    <textarea id="message" rows="1" placeholder="Scrivi un messaggio a JARVIS..."></textarea>
+                    <button class="send" id="send" type="button" aria-label="Invia"></button>
+                </div>
+                <div class="hint">Invio per spedire · Shift + Invio per andare a capo</div>
+            </footer>
+
+        </section>
+
+        <aside class="side right" id="side-right">
+            <div class="side-title">Memoria <span class="badge" id="mem-count">0</span></div>
+
+            <form class="mem-add" id="mem-form" autocomplete="off">
+                <input id="mem-input" placeholder="Aggiungi un ricordo…" maxlength="300">
+                <button class="btn sm" type="submit" aria-label="Aggiungi">+</button>
+            </form>
+
+            <div class="scroll" id="mem-list"></div>
+
+            <div class="side-foot">
+                <button class="btn ghost sm" id="mem-clear" type="button">Cancella memoria</button>
+            </div>
+        </aside>
+
+        <div class="scrim" id="scrim"></div>
+
+    </main>
+</div>
+
+<div id="toasts"></div>
+
+<script src="{{ url_for('static', filename='js/galaxy.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
